@@ -28,28 +28,27 @@ class NetCat:
             try:
                 conn, addr = self.socket.accept()
                 print(f"Accepted connection from client: {addr}")
-                data = self.socket.recv(1024)
-                if data:
-                    print(data.decode())
-                else:
-                    print('No data')
-                    self.socket.close()
+                self.handle(conn)
             except Exception as e:
-                print(f"Error {e}")
-                self.socket.close()
+                print(f'Error: {e}')
+
+    # TODO: Build handle method to handle a client socket
+    def handle(self, conn):
+        self.buffer = conn.recv(1024)
+        try:
+            while self.buffer:
+                print(self.buffer.decode())
+                conn.close()
+                break
+        except Exception as e:
+            print(f'Error: {e}')
+
     # TODO: Send will send messages to the socket server to control what it does
     def send(self):
         message = args.execute
         self.socket.connect((args.address, args.port))
         self.socket.send(message.encode())
-        while True:
-            data = self.socket.recv(1024)
-            if data:
-                print(data.decode())
-            else:
-                print('Closing socket')
-                self.socket.close()
-
+        self.socket.close()
 
 # TODO: Define an argument parser to pass args from command line and create a class instance
 parser = argparse.ArgumentParser(description='Netcat like program')
